@@ -55,6 +55,21 @@ public class AuctionTests : IClassFixture<WebApplicationFactory<Program>>
 
         var response = await _client.PostAsJsonAsync("/api/auctions", pastAuction);
 
-        // 
+         
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-    } }
+    }
+    [Fact]
+    public async Task Urun_Adi_Boss_400_BadRequest_Donmeli()
+    {
+        var namelessAuction = new
+        {
+            ItemName = "", 
+            StartingPrice = 100,
+            EndTime = DateTime.Now.AddDays(1)
+        };
+
+        var response = await _client.PostAsJsonAsync("/api/auctions", namelessAuction);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+}
