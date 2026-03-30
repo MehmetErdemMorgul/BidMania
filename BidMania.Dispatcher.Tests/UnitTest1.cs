@@ -23,4 +23,15 @@ public class AuthTests : IClassFixture<WebApplicationFactory<Program>>
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
+    [Fact]
+    public async Task Gecerli_Token_Gonderilirse_Erisim_Saglanmali()
+    {
+        _client.DefaultRequestHeaders.Authorization =
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", "bu-bir-test-tokenidir");
+
+        var response = await _client.GetAsync("/api/products");
+
+ 
+        Assert.NotEqual(System.Net.HttpStatusCode.Unauthorized, response.StatusCode);
+    }
 }
