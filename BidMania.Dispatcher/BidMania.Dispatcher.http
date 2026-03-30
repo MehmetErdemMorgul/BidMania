@@ -1,0 +1,6 @@
+@BidMania.Dispatcher_HostAddress = http://localhost:5147
+
+GET {{BidMania.Dispatcher_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

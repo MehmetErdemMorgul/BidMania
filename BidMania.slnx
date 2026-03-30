@@ -1,1 +1,12 @@
-<Solution />
+<Solution>
+  <Folder Name="/Src/">
+    <Project Path="BidMania.AuctionService/BidMania.AuctionService.csproj" />
+    <Project Path="BidMania.AuthService/BidMania.AuthService.csproj" />
+    <Project Path="BidMania.Dispatcher/BidMania.Dispatcher.csproj" />
+    <Project Path="BidMania.ProductService/BidMania.ProductService.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="BidMania.Auth.Tests/BidMania.Auth.Tests.csproj" />
+    <Project Path="BidMania.Dispatcher.Tests/BidMania.Dispatcher.Tests.csproj" />
+  </Folder>
+</Solution>
