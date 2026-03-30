@@ -1,13 +1,19 @@
-﻿using BidMania.Dispatcher; 
-using Microsoft.AspNetCore.Mvc.Testing;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.Net.Http.Headers;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.IdentityModel.Tokens;
 using Xunit;
+using BidMania.Dispatcher;
 
 namespace BidMania.Dispatcher.Tests;
 
 public class AuthTests : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly HttpClient _client;
+    private const string SecretKey = "KocaeliBilisimSistemleriMuh41_2026";
 
     public AuthTests(WebApplicationFactory<Program> factory)
     {
@@ -17,21 +23,31 @@ public class AuthTests : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task Token_Gonderilmezse_401_Unauthorized_Donmeli()
     {
-
         var response = await _client.GetAsync("/api/products");
-
-
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
+
     [Fact]
     public async Task Gecerli_Token_Gonderilirse_Erisim_Saglanmali()
     {
-        _client.DefaultRequestHeaders.Authorization =
-            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", "bu-bir-test-tokenidir");
+        var token = GenerateTestToken();
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var response = await _client.GetAsync("/api/products");
 
- 
-        Assert.NotEqual(System.Net.HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.NotEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    private string GenerateTestToken()
+    {
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecretKey));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+        var token = new JwtSecurityToken(
+            claims: new[] { new Claim(ClaimTypes.Name, "Mustafa") },
+            expires: DateTime.Now.AddMinutes(30),
+            signingCredentials: credentials);
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
