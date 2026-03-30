@@ -29,4 +29,18 @@ public class AuctionTests : IClassFixture<WebApplicationFactory<Program>>
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
+    [Fact]
+    public async Task Fiyat_Sifir_Veya_Negatifse_400_BadRequest_Donmeli()
+    {
+        var badAuction = new
+        {
+            ItemName = "Hatalı Ürün",
+            StartingPrice = -500,
+            EndTime = DateTime.Now.AddDays(1)
+        };
+
+        var response = await _client.PostAsJsonAsync("/api/auctions", badAuction);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
 }
