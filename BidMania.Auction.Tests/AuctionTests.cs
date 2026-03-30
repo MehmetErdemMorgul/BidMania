@@ -43,4 +43,18 @@ public class AuctionTests : IClassFixture<WebApplicationFactory<Program>>
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
-}
+    [Fact]
+    public async Task Bitis_Tarihi_Gecmisse_400_BadRequest_Donmeli()
+    {
+        var pastAuction = new
+        {
+            ItemName = "Eski Eşya",
+            StartingPrice = 500,
+            EndTime = DateTime.Now.AddDays(-1)
+        };
+
+        var response = await _client.PostAsJsonAsync("/api/auctions", pastAuction);
+
+        // 
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    } }
