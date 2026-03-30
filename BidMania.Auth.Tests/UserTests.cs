@@ -37,6 +37,7 @@ public class UserTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Fact]
+
     public async Task Dogru_Bilgilerle_Login_Olunursa_Token_Donmeli()
     {
         var loginDto = new { Username = "mustafa", Password = "Password123!" };
@@ -44,8 +45,12 @@ public class UserTests : IClassFixture<WebApplicationFactory<Program>>
         var response = await _client.PostAsJsonAsync("/api/auth/login", loginDto);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var result = await response.Content.ReadFromJsonAsync<dynamic>();
-        Assert.NotNull(result?.token);
+
+        var result = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+
+        Assert.NotNull(result);
+        Assert.True(result.ContainsKey("token"));
+        Assert.False(string.IsNullOrEmpty(result["token"]));
     }
 
     [Fact]
