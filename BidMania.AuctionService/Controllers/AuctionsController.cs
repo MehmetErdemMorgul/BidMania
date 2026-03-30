@@ -7,8 +7,15 @@ namespace BidMania.AuctionService.Controllers;
 public class AuctionsController : ControllerBase
 {
     [HttpPost]
-    public IActionResult CreateAuction([FromBody] object auction)
+    public IActionResult CreateAuction([FromBody] AuctionDto auction)
     {
+        if (auction.StartingPrice <= 0)
+        {
+            return BadRequest();
+        }
+
         return Created("", auction);
     }
 }
+
+public record AuctionDto(string ItemName, decimal StartingPrice, DateTime EndTime);
