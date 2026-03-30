@@ -9,7 +9,7 @@ public class AuctionsController : ControllerBase
     [HttpPost]
     public IActionResult CreateAuction([FromBody] AuctionDto auction)
     {
-        if (auction.StartingPrice <= 0||auction.EndTime <= DateTime.Now)
+        if (string.IsNullOrWhiteSpace(auction.ItemName) || auction.StartingPrice <= 0||auction.EndTime <= DateTime.Now)
         {
             return BadRequest();
         }
