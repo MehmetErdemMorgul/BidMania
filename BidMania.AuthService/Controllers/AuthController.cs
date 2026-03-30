@@ -31,7 +31,7 @@ public class AuthController : ControllerBase
             var token = GenerateToken(login.Username);
             return Ok(new { token });
         }
-        return BadRequest();
+        return Unauthorized();
     }
 
     private string GenerateToken(string username)
