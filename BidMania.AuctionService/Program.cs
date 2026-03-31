@@ -1,22 +1,31 @@
+using BidMania.AuctionService.Models;
+using BidMania.AuctionService.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// 1. Ayarları appsettings.json'dan çekip sisteme tanıtıyoruz
+builder.Services.Configure<AuctionDatabaseSettings>(
+    builder.Configuration.GetSection("AuctionDatabaseSettings"));
 
+// 2. MongoDB ile konuşacak olan Repository'yi (Depocu) sisteme kaydediyoruz
+builder.Services.AddSingleton<AuctionRepository>();
+
+// 3. Standart API servisleri
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Pipeline Ayarları
 if (app.Environment.IsDevelopment())
 {
+    // Geliştirme aşamasında buraya Swagger vb. eklenebilir
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
+
+// TESTLER İÇİN KRİTİK SATIR: Sakın silme kanka!
 public partial class Program { }
