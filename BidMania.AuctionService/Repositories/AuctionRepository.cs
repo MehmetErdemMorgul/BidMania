@@ -23,4 +23,6 @@ public class AuctionRepository
     // Tüm ihaleleri getirme metodu
     public async Task<List<Auction>> GetAllAsync() =>
         await _collection.Find(_ => true).ToListAsync();
+
+
 }
