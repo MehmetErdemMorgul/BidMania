@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Xunit;
 using BidMania.AuctionService;
+using BidMania.AuctionService.Models;
 
 namespace BidMania.Auction.Tests;
 
@@ -71,5 +72,14 @@ public class AuctionTests : IClassFixture<WebApplicationFactory<Program>>
         var response = await _client.PostAsJsonAsync("/api/auctions", namelessAuction);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Ihaleler_Listelenmek_Istendiginde_200_OK_Donmeli()
+    {
+
+        var response = await _client.GetAsync("/api/auctions");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 }

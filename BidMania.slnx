@@ -6,9 +6,7 @@
     <Project Path="BidMania.ProductService/BidMania.ProductService.csproj" />
   </Folder>
   <Folder Name="/Tests/">
-    <Project Path="BidMania.Auction.Tests/BidMania.Auction.Tests.csproj" Id="8db99514-02b9-4856-9c0f-b6fdddb2cd5c">
-      <Build Solution="Debug|*" Project="false" />
-    </Project>
+    <Project Path="BidMania.Auction.Tests/BidMania.Auction.Tests.csproj" Id="8db99514-02b9-4856-9c0f-b6fdddb2cd5c" />
     <Project Path="BidMania.Auth.Tests/BidMania.Auth.Tests.csproj" />
     <Project Path="BidMania.Dispatcher.Tests/BidMania.Dispatcher.Tests.csproj" />
   </Folder>
