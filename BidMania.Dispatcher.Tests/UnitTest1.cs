@@ -1,5 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
@@ -36,6 +38,17 @@ public class AuthTests : IClassFixture<WebApplicationFactory<Program>>
         var response = await _client.GetAsync("/api/products");
 
         Assert.NotEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Gecerli_Token_Ile_Auctions_Istegi_Basariyla_Yonlendirilmeli()
+    {
+        var token = GenerateTestToken();
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await _client.GetAsync("/api/auctions");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     private string GenerateTestToken()
