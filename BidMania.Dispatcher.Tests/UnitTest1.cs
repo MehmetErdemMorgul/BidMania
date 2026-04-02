@@ -72,10 +72,17 @@ public class AuthTests : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task Varolan_Bir_Ihale_ID_Ile_Istenirse_200_OK_Donmeli()
     {
+        var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiTXVzdGFmYSIsImV4cCI6MTc3NTE0OTUwNn0.v-nJttg8gvJF5iJa3PiZtCJ2Cj7ruF2leLnZg9eicnU";
+
+        _client.DefaultRequestHeaders.Authorization =
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+        var testId = "69ce4b4d5f29b55cea296cf1";
+
         
-        var testId = "66085a69842f61642c67292a";
         var response = await _client.GetAsync($"/api/auctions/{testId}");
 
+        
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 }

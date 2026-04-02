@@ -10,19 +10,20 @@ public class AuctionRepository
 
     public AuctionRepository(IOptions<AuctionDatabaseSettings> settings)
     {
-        // Appsettings'ten bilgileri çekip Mongo'ya bağlanıyoruz
+        // Mongo Bağlantısı oluşturur 
         var client = new MongoClient(settings.Value.ConnectionString);
         var database = client.GetDatabase(settings.Value.DatabaseName);
         _collection = database.GetCollection<Auction>(settings.Value.CollectionName);
     }
 
-    // Yeni ihale kaydetme metodu
+    // Yeni bir açık artırma oluşturur
     public async Task CreateAsync(Auction auction) =>
         await _collection.InsertOneAsync(auction);
-
-    // Tüm ihaleleri getirme metodu
+    // Tüm açık artırmaları getirir
     public async Task<List<Auction>> GetAllAsync() =>
         await _collection.Find(_ => true).ToListAsync();
-
+    // Belirli bir açık artırmayı ID'sine göre getirir
+    public async Task<Auction?> GetByIdAsync(string id) =>
+        await _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
 }

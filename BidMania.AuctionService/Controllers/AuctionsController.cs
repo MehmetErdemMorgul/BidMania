@@ -49,7 +49,22 @@ public class AuctionsController : ControllerBase
         var auctions = await _repository.GetAllAsync();
         return Ok(auctions);
     }
+
+    [HttpGet("{id}")] // Burada id'ye göre bir ihale getireceğiz, bu yüzden URL'de {id} parametresi var
+    public async Task<ActionResult<Auction>> GetAuctionById(string id)
+    {
+        var auction = await _repository.GetByIdAsync(id);
+
+        //404 Not Found: Eğer böyle bir ihale yoksa, kullanıcıya bunu bildirmek için bu kodu kullanıyoruz
+        if (auction == null)
+        {
+            return NotFound();
+        }
+
+        // 200 OK: Eğer ihale bulunduysa, onu kullanıcıya geri gönderiyoruz
+        return Ok(auction);
+    }
 }
 
-// Senin yazdığın DTO burada kalabilir, hiçbir mahsuru yok
+
 public record AuctionDto(string ItemName, decimal StartingPrice, DateTime EndTime);
