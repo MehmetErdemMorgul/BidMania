@@ -1,25 +1,26 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Net;
+﻿using BidMania.Dispatcher;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.IdentityModel.Tokens;
 using Xunit;
-using BidMania.Dispatcher;
+using Xunit.Abstractions;
 
 namespace BidMania.Dispatcher.Tests;
 
 public class AuthTests : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly HttpClient _client;
+    private readonly ITestOutputHelper _output;
     private const string SecretKey = "KocaeliBilisimSistemleriMuh41_2026";
 
-    public AuthTests(WebApplicationFactory<Program> factory)
+    public AuthTests(WebApplicationFactory<Program> factory, ITestOutputHelper output)
     {
         _client = factory.CreateClient();
+        _output = output;
     }
 
     [Fact]
@@ -61,6 +62,10 @@ public class AuthTests : IClassFixture<WebApplicationFactory<Program>>
             expires: DateTime.Now.AddMinutes(30),
             signingCredentials: credentials);
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        var encodedToken = new JwtSecurityTokenHandler().WriteToken(token);
+
+        _output.WriteLine($"POSTMAN_TOKEN: {encodedToken}");
+
+        return encodedToken;
     }
 }
