@@ -68,4 +68,14 @@ public class AuthTests : IClassFixture<WebApplicationFactory<Program>>
 
         return encodedToken;
     }
+
+    [Fact]
+    public async Task Varolan_Bir_Ihale_ID_Ile_Istenirse_200_OK_Donmeli()
+    {
+        
+        var testId = "66085a69842f61642c67292a";
+        var response = await _client.GetAsync($"/api/auctions/{testId}");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
 }
