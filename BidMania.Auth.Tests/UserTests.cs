@@ -14,8 +14,8 @@ public class UserTests : IClassFixture<WebApplicationFactory<Program>>
     public UserTests(WebApplicationFactory<Program> factory)
     {
         _client = factory.CreateClient();
+        _client.DefaultRequestHeaders.Add("X-Internal-Key", "Kocaeli41_Secret");
     }
-
     [Fact]
     public async Task Kayit_Basarili_Olursa_201_Created_Donmeli()
     {

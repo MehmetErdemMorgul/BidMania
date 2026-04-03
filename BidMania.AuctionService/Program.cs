@@ -3,17 +3,29 @@ using BidMania.AuctionService.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. MongoDB Ayarları
+// MongoDB 
 builder.Services.Configure<AuctionDatabaseSettings>(
     builder.Configuration.GetSection("AuctionDatabaseSettings"));
 
-// 2. Repository Kaydı (Mutfaktaki malzemeler)
+
 builder.Services.AddSingleton<AuctionRepository>();
 
-// 3. API Servisleri
 builder.Services.AddControllers();
 
 var app = builder.Build();
+
+
+app.Use(async (context, next) =>
+{
+    if (!context.Request.Headers.TryGetValue("X-Internal-Key", out var extractedKey) ||
+        extractedKey != "Kocaeli41_Secret")
+    {
+        context.Response.StatusCode = 403;
+        await context.Response.WriteAsync("Erisim Yasak: Sadece Dispatcher uzerinden gelmelisiniz.");
+        return;
+    }
+    await next();
+});
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

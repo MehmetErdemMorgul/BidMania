@@ -14,6 +14,11 @@ public class AuctionTests : IClassFixture<WebApplicationFactory<Program>>
     public AuctionTests(WebApplicationFactory<Program> factory)
     {
         _client = factory.CreateClient();
+
+        if (!_client.DefaultRequestHeaders.Contains("X-Internal-Key"))
+        {
+            _client.DefaultRequestHeaders.Add("X-Internal-Key", "Kocaeli41_Secret");
+        }
     }
 
     [Fact]
