@@ -9,5 +9,6 @@
     <Project Path="BidMania.Auction.Tests/BidMania.Auction.Tests.csproj" Id="8db99514-02b9-4856-9c0f-b6fdddb2cd5c" />
     <Project Path="BidMania.Auth.Tests/BidMania.Auth.Tests.csproj" />
     <Project Path="BidMania.Dispatcher.Tests/BidMania.Dispatcher.Tests.csproj" />
+    <Project Path="BidMania.Product.Tests/BidMania.Product.Tests.csproj" Id="3c8f89d2-b976-40fb-8c9c-a041c1b11bdd" />
   </Folder>
 </Solution>
