@@ -1,19 +1,21 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Yarp.ReverseProxy.Transforms; 
+using Yarp.ReverseProxy.Transforms;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. YARP 
+// --- YARP AYARLARI ---
+var proxyConfig = builder.Configuration.GetSection("ReverseProxy");
+
 builder.Services.AddReverseProxy()
-    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
+    .LoadFromConfig(proxyConfig)
     .AddTransforms(builderContext =>
     {
         builderContext.AddRequestHeader("X-Internal-Key", "Kocaeli41_Secret");
     });
 
-// JWT
+// --- JWT AYARLARI ---
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -29,19 +31,25 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("DispatcherPolicy", policy => policy.RequireAuthenticatedUser());
+    options.AddPolicy("Default", policy => policy.RequireAuthenticatedUser());
 });
+
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
-
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapReverseProxy(); 
+
+try
+{
+    app.MapReverseProxy();
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"!!! KRİTİK HATA: YARP başlatılamadı! Mesaj: {ex.Message}");
+}
+
 app.MapControllers();
-
 app.Run();
-
-public partial class Program { }
