@@ -5,17 +5,13 @@ using Yarp.ReverseProxy.Transforms;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- YARP AYARLARI ---
-var proxyConfig = builder.Configuration.GetSection("ReverseProxy");
-
 builder.Services.AddReverseProxy()
-    .LoadFromConfig(proxyConfig)
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
     .AddTransforms(builderContext =>
     {
         builderContext.AddRequestHeader("X-Internal-Key", "Kocaeli41_Secret");
     });
 
-// --- JWT AYARLARI ---
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -31,25 +27,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("Default", policy => policy.RequireAuthenticatedUser());
+    options.AddPolicy("YazLabAuth", policy => policy.RequireAuthenticatedUser());
 });
-
-builder.Services.AddControllers();
 
 var app = builder.Build();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapReverseProxy();
 
-try
-{
-    app.MapReverseProxy();
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"!!! KRİTİK HATA: YARP başlatılamadı! Mesaj: {ex.Message}");
-}
+Console.WriteLine("DISPATCHER RUNNING");
 
-app.MapControllers();
 app.Run();
+
+public partial class Program { }
