@@ -36,7 +36,7 @@ app.MapPost("/api/products", async (Product product) =>
 app.MapControllers(); 
 app.Run();
 
--
+
 public class Product
 {
     [BsonId]

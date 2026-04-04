@@ -87,4 +87,22 @@ public class AuctionTests : IClassFixture<WebApplicationFactory<Program>>
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
+
+    [Fact]
+    public async Task Varolan_Bir_Ihale_ID_Ile_Istenirse_200_OK_Donmeli()
+    {
+        
+        var testAuction = new { ItemName = "Dinamik Ürün", StartingPrice = 2500, EndTime = DateTime.Now.AddDays(3) };
+        var postResponse = await _client.PostAsJsonAsync("/api/auctions", testAuction);
+
+        
+        var createdAuction = await postResponse.Content.ReadFromJsonAsync<BidMania.AuctionService.Models.Auction>();
+        var targetId = createdAuction?.Id;
+
+        
+        var getResponse = await _client.GetAsync($"/api/auctions/{targetId}");
+
+        
+        Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
+    }
 }
