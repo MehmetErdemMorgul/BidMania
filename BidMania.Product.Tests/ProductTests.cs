@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using System.Net;
 using System.Net.Http.Json;
 using Xunit;
-
 
 namespace BidMania.Product.Tests;
 
@@ -20,9 +18,7 @@ public class ProductTests : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task Yeni_Urun_Eklendiginde_201_Created_Donmeli()
     {
-        
         var product = new { Name = "Test Ürünü", Price = 100.50m };
-
         _client.DefaultRequestHeaders.Clear();
         _client.DefaultRequestHeaders.Add("X-Internal-Key", InternalKey);
 
@@ -31,15 +27,26 @@ public class ProductTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Fact]
-    public async Task Urunler_Listelenmek_Istendiginde_200_OK_Donmeli()
+    public async Task Urunler_Listelenmek_Istendiginde_200_OK_Donmeli() 
     {
-        
         _client.DefaultRequestHeaders.Clear();
-        _client.DefaultRequestHeaders.Add("X-Internal-Key", "Kocaeli41_Secret");
+        _client.DefaultRequestHeaders.Add("X-Internal-Key", InternalKey);
 
-        
         var response = await _client.GetAsync("/api/products");
-
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Varolan_Urun_Silinmek_Istendiginde_204_NoContent_Donmeli()
+    {
+        _client.DefaultRequestHeaders.Clear();
+        _client.DefaultRequestHeaders.Add("X-Internal-Key", InternalKey);
+
+        var tempProduct = new { Name = "Silinecek", Price = 10.0m };
+        var postResponse = await _client.PostAsJsonAsync("/api/products", tempProduct);
+        var created = await postResponse.Content.ReadFromJsonAsync<ProductItem>();
+
+        var deleteResponse = await _client.DeleteAsync($"/api/products/{created?.Id}");
+        Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
     }
 }
