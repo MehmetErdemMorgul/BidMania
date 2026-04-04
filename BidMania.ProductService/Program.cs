@@ -27,6 +27,19 @@ app.MapPost("/api/products", async (Product product) =>
     return Results.Created($"/api/products/{product.Id}", product);
 });
 
+
+app.MapGet("/api/products", async () =>
+{
+    var allProducts = await products.Find(_ => true).ToListAsync();
+    return Results.Ok(allProducts); 
+});
+
+app.MapGet("/api/products/{id}", async (string id) =>
+{
+    var product = await products.Find(x => x.Id == id).FirstOrDefaultAsync();
+    return product is not null ? Results.Ok(product) : Results.NotFound();
+});
+
 app.Run();
 
 
