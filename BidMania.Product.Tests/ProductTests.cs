@@ -29,4 +29,17 @@ public class ProductTests : IClassFixture<WebApplicationFactory<Program>>
         var response = await _client.PostAsJsonAsync("/api/products", product);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
+
+    [Fact]
+    public async Task Urunler_Listelenmek_Istendiginde_200_OK_Donmeli()
+    {
+        
+        _client.DefaultRequestHeaders.Clear();
+        _client.DefaultRequestHeaders.Add("X-Internal-Key", "Kocaeli41_Secret");
+
+        
+        var response = await _client.GetAsync("/api/products");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
 }
