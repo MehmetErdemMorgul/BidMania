@@ -49,4 +49,30 @@ public class ProductTests : IClassFixture<WebApplicationFactory<Program>>
         var deleteResponse = await _client.DeleteAsync($"/api/products/{created?.Id}");
         Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
     }
+
+    [Fact]
+    public async Task Varolan_Urun_Guncellenmek_Istendiginde_204_NoContent_Donmeli()
+    {
+        
+        _client.DefaultRequestHeaders.Clear();
+        _client.DefaultRequestHeaders.Add("X-Internal-Key", InternalKey);
+
+        var originalItem = new { Name = "Eski Ürün", Price = 100m };
+        var postResponse = await _client.PostAsJsonAsync("/api/products", originalItem);
+        var created = await postResponse.Content.ReadFromJsonAsync<ProductItem>();
+
+        
+        var updatedItem = new ProductItem
+        {
+            Id = created?.Id,
+            Name = "Güncel Ürün",
+            Price = 200m
+        };
+
+        
+        var putResponse = await _client.PutAsJsonAsync($"/api/products/{created?.Id}", updatedItem);
+
+        
+        Assert.Equal(HttpStatusCode.NoContent, putResponse.StatusCode);
+    }
 }
