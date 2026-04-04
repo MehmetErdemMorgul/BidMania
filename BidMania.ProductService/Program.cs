@@ -25,6 +25,9 @@ app.Use(async (context, next) =>
 
 app.MapPost("/api/products", async (ProductItem item) =>
 {
+    if (string.IsNullOrEmpty(item.Name) || item.Price <= 0)
+        return Results.BadRequest(); 
+
     await products.InsertOneAsync(item);
     return Results.Created($"/api/products/{item.Id}", item);
 });
@@ -37,10 +40,10 @@ app.MapGet("/api/products", async () =>
 });
 
 
-app.MapGet("/api/products/{id}", async (string id) =>
+app.MapPut("/api/products/{id}", async (string id, ProductItem updatedItem) =>
 {
-    var item = await products.Find(x => x.Id == id).FirstOrDefaultAsync();
-    return item is not null ? Results.Ok(item) : Results.NotFound();
+    var result = await products.ReplaceOneAsync(x => x.Id == id, updatedItem);
+    return result.MatchedCount > 0 ? Results.NoContent() : Results.NotFound();
 });
 
 
