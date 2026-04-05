@@ -2,22 +2,30 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Prometheus;
+using BidMania.AuthService.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 var isDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
 var mongoHost = isDocker ? "bidmania_mongo" : "localhost";
 var connectionString = $"mongodb://{mongoHost}:27017";
-
 var mongoClient = new MongoClient(connectionString);
+
+
 var productDb = mongoClient.GetDatabase("ProductDb");
+var authDb = mongoClient.GetDatabase("AuthDb");
 var productsCollection = productDb.GetCollection<Product>("Products");
 
+
+builder.Services.AddSingleton<IMongoDatabase>(authDb);
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
+
 app.UseHttpMetrics();
+
 
 app.Use(async (context, next) =>
 {
@@ -51,9 +59,10 @@ app.MapPost("/api/products", async (Product product) =>
     return Results.Created($"/api/products/{product.Id}", product);
 });
 
-app.MapControllers();
-app.MapMetrics();
+app.MapControllers(); 
+app.MapMetrics();     
 app.Run();
+
 
 public class Product
 {
