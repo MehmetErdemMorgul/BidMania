@@ -1,10 +1,15 @@
 ﻿using MongoDB.Driver;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var mongoClient = new MongoClient("mongodb://localhost:27017");
+var isDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
+var mongoHost = isDocker ? "bidmania_mongo" : "localhost";
+var connectionString = $"mongodb://{mongoHost}:27017";
+
+var mongoClient = new MongoClient(connectionString);
 var productDb = mongoClient.GetDatabase("ProductDb");
 var productsCollection = productDb.GetCollection<Product>("Products");
 
@@ -12,19 +17,32 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+app.UseHttpMetrics();
+
 app.Use(async (context, next) =>
 {
-    
+    if (context.Request.Path.StartsWithSegments("/metrics"))
+    {
+        await next();
+        return;
+    }
+
+    var remoteIp = context.Connection.RemoteIpAddress?.ToString();
+    if (remoteIp == "127.0.0.1" || remoteIp == "::1")
+    {
+        await next();
+        return;
+    }
+
     if (!context.Request.Headers.TryGetValue("X-Internal-Key", out var extractedKey) ||
         extractedKey != "Kocaeli41_Secret")
     {
-        context.Response.StatusCode = 403; 
+        context.Response.StatusCode = 403;
         await context.Response.WriteAsync("Erisim Yasak: Sadece Dispatcher uzerinden gelmelisiniz.");
         return;
     }
     await next();
 });
-
 
 app.MapGet("/api/products", async () => await productsCollection.Find(_ => true).ToListAsync());
 app.MapPost("/api/products", async (Product product) =>
@@ -33,9 +51,9 @@ app.MapPost("/api/products", async (Product product) =>
     return Results.Created($"/api/products/{product.Id}", product);
 });
 
-app.MapControllers(); 
+app.MapControllers();
+app.MapMetrics();
 app.Run();
-
 
 public class Product
 {
@@ -45,6 +63,5 @@ public class Product
     public string Name { get; set; } = null!;
     public decimal Price { get; set; }
 }
-
 
 public partial class Program { }

@@ -11,4 +11,10 @@
     <Project Path="BidMania.Dispatcher.Tests/BidMania.Dispatcher.Tests.csproj" />
     <Project Path="BidMania.Product.Tests/BidMania.Product.Tests.csproj" Id="3c8f89d2-b976-40fb-8c9c-a041c1b11bdd" />
   </Folder>
+  <Folder Name="/Çözüm Öğeleri/">
+    <File Path="prometheus.yml" />
+  </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
 </Solution>
