@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   mongodb:
     image: mongo:latest
@@ -27,23 +29,46 @@ services:
     build:
       context: .
       dockerfile: BidMania.Dispatcher/Dockerfile
+    container_name: bidmania-dispatcher
     ports:
       - "5147:8080"
+    depends_on:
+      - bidmania.authservice
+      - bidmania.productservice
 
   bidmania.authservice:
     build:
       context: .
       dockerfile: BidMania.AuthService/Dockerfile
-
-  bidmania.auctionservice:
-    build:
-      context: .
-      dockerfile: BidMania.AuctionService/Dockerfile
+    container_name: bidmania-authservice
+    environment:
+      - ConnectionStrings__DefaultConnection=mongodb://mongodb:27017
+      - DatabaseSettings__DatabaseName=AuthDb
+      - DatabaseSettings__UserCollectionName=Users
+    depends_on:
+      - mongodb
 
   bidmania.productservice:
     build:
       context: .
       dockerfile: BidMania.ProductService/Dockerfile
+    container_name: bidmania-productservice
+    environment:
+      - ConnectionStrings__DefaultConnection=mongodb://mongodb:27017
+      - DatabaseSettings__DatabaseName=ProductDb
+    depends_on:
+      - mongodb
+
+  bidmania.auctionservice:
+    build:
+      context: .
+      dockerfile: BidMania.AuctionService/Dockerfile
+    container_name: bidmania-auctionservice
+    environment:
+      - ConnectionStrings__DefaultConnection=mongodb://mongodb:27017
+      - DatabaseSettings__DatabaseName=AuctionDb
+    depends_on:
+      - mongodb
 
 volumes:
   mongo_data:
