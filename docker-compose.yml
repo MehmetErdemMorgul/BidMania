@@ -4,8 +4,6 @@ services:
     container_name: bidmania_mongo
     ports:
       - "27017:27017"
-    environment:
-      - MONGO_INITDB_DATABASE=AuctionDb
     volumes:
       - mongo_data:/data/db
 
@@ -36,22 +34,16 @@ services:
     build:
       context: .
       dockerfile: BidMania.AuthService/Dockerfile
-    ports:
-      - "5148:8080"
 
   bidmania.auctionservice:
     build:
       context: .
       dockerfile: BidMania.AuctionService/Dockerfile
-    ports:
-      - "5149:8080"
 
   bidmania.productservice:
     build:
       context: .
       dockerfile: BidMania.ProductService/Dockerfile
-    ports:
-      - "5150:8080"
 
 volumes:
   mongo_data:
